@@ -1,56 +1,58 @@
 # FlipClock
 
-ESP32-C3 翻页时钟，基于 ST7789 LCD (240x320) 显示翻页动画效果的数字时间。
+ESP32-C3 flip clock with a ST7789 LCD (240x320), rendering digit transitions with a realistic page-flip animation.
 
-## 效果
+[中文文档](README_cn.md)
 
-翻页动画通过梯形条带变形模拟透视缩短，上半卡片折下后下半卡片展开，配合侧面厚度渲染，还原真实翻页钟的视觉效果。
+## Preview
 
-## 硬件
+The flip animation uses trapezoidal strip distortion to simulate foreshortening in perspective. The upper half folds down, the lower half unfolds, and side thickness shading completes the classic mechanical flip-clock look.
 
-| 组件 | 型号 |
-|------|------|
+## Hardware
+
+| Component | Model |
+|-----------|-------|
 | MCU | ESP32-C3 (esp32-c3-devkitm-1) |
-| 显示屏 | ST7789, 240x320, SPI |
-| Flash | DIO 模式, 80MHz |
+| Display | ST7789, 240x320, SPI |
+| Flash | DIO mode, 80 MHz |
 
-### 接线
+### Wiring
 
-| 引脚 | GPIO |
-|------|------|
+| Pin | GPIO |
+|-----|------|
 | MOSI | 3 |
 | SCLK | 2 |
 | DC | 4 |
 | RST | 5 |
 | CS | 7 |
 
-## 构建与烧录
+## Build & Flash
 
-需要 [PlatformIO](https://platformio.org/) 环境。
+Requires [PlatformIO](https://platformio.org/).
 
 ```bash
-pio run                    # 构建
-pio run --target upload    # 烧录
-pio device monitor         # 串口监视 (115200)
+pio run                    # build
+pio run --target upload    # flash
+pio device monitor         # serial monitor (115200)
 ```
 
-## 项目结构
+## Project Structure
 
 ```
 src/
-  main.cpp      # 主程序：SPI 初始化、翻页动画渲染、时间推进
-  digitals.h    # 0-9 数字位图 RGB565 预合成数据（上下半各 32x24）
-platformio.ini  # PlatformIO 构建配置
+  main.cpp      # Entry point: SPI init, flip animation rendering, time keeping
+  digitals.h    # 0-9 digit bitmaps as pre-composited RGB565 data (upper/lower halves, 32x24 each)
+platformio.ini  # PlatformIO build configuration
 ```
 
-## 技术细节
+## Technical Details
 
-- **动画**: 20FPS，每秒数字变化触发 20 帧翻页动画（前 10 帧上半折下，后 10 帧下半展开）
-- **渲染**: GFXcanvas16 离屏渲染，全帧 memcpy 到 LCD，无局部刷新闪烁
-- **性能**: 浮点运算在启动时预计算为查找表，运行时零浮点操作
-- **数字卡片**: 32x48 像素，上半/下半各 24 像素，12 条带梯形变形
+- **Animation**: 20 FPS. Each digit change triggers a 20-frame flip (frames 1-10 upper half folds down, frames 11-20 lower half unfolds)
+- **Rendering**: Off-screen via GFXcanvas16, full-frame memcpy to LCD — no partial-refresh flicker
+- **Performance**: Float math pre-computed into lookup tables at startup; zero floating-point ops at runtime
+- **Digit cards**: 32x48 px, 24 px per half, 12 trapezoidal strips per deformation
 
-## 依赖
+## Dependencies
 
 - Arduino Framework (C++11)
 - Adafruit GFX Library 1.12.6
