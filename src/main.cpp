@@ -40,8 +40,8 @@ ST7789_AVR lcd(TFT_DC, TFT_RST, TFT_CS);
 GFXcanvas16 *canvas = nullptr;
 
 // 布局：6个数字的X坐标 [秒个,秒十,分个,分十,时个,时十]
-static int8_t digit_x[6];
-static int8_t colon_x[2];
+static int16_t digit_x[6];
+static int16_t colon_x[2];
 
 // 翻页动画查找表 (启动时计算，运行时零浮点)
 struct StripEntry {
