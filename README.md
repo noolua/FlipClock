@@ -6,6 +6,10 @@ ESP32-C3 flip clock with a ST7789 LCD (240x320), rendering digit transitions wit
 
 ## Preview
 
+<p align="center">
+  <img src="misc/demo.gif" alt="FlipClock Demo" width="200">
+</p>
+
 The flip animation uses trapezoidal strip distortion to simulate foreshortening in perspective. The upper half folds down, the lower half unfolds, and side thickness shading completes the classic mechanical flip-clock look.
 
 ## Hardware
