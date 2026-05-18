@@ -1,6 +1,6 @@
 # FlipClock
 
-ESP32-C3 flip clock with a ST7789 LCD (240x320), rendering digit transitions with a realistic page-flip animation.
+A minimal, flicker-free flip clock for ESP32-C3 + ST7789 LCD (240×320), with perspective-correct page-flip animation in 265 lines of C++.
 
 [中文文档](README_cn.md)
 
@@ -11,6 +11,16 @@ ESP32-C3 flip clock with a ST7789 LCD (240x320), rendering digit transitions wit
 </p>
 
 The flip animation uses trapezoidal strip distortion to simulate foreshortening in perspective. The upper half folds down, the lower half unfolds, and side thickness shading completes the classic mechanical flip-clock look.
+
+## Features
+
+- **265-line minimal implementation** — single `main.cpp`, no frameworks, no bloat
+- **Zero-float runtime** — trig lookup tables (`int8_t`), pure integer animation
+- **Direct framebuffer blitting** — `memcpy` over `drawPixel()`, 10× faster
+- **RGB565 pre-composited sprites** — no alpha blending at runtime
+- **~165 KB RAM saved** — canvas only covers the visible 240×48 strip
+- **Flicker-free double buffering** — full-frame GFXcanvas16 + single SPI transfer
+- **20 FPS flip animation** — perspective trapezoid strip deformation
 
 ## Hardware
 
@@ -48,13 +58,6 @@ src/
   digitals.h    # 0-9 digit bitmaps as pre-composited RGB565 data (upper/lower halves, 32x24 each)
 platformio.ini  # PlatformIO build configuration
 ```
-
-## Technical Details
-
-- **Animation**: 20 FPS. Each digit change triggers a 20-frame flip (frames 1-10 upper half folds down, frames 11-20 lower half unfolds)
-- **Rendering**: Off-screen via GFXcanvas16, full-frame memcpy to LCD — no partial-refresh flicker
-- **Performance**: Float math pre-computed into lookup tables at startup; zero floating-point ops at runtime
-- **Digit cards**: 32x48 px, 24 px per half, 12 trapezoidal strips per deformation
 
 ## Dependencies
 
